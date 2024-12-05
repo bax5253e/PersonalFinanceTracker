@@ -23,7 +23,10 @@ class AppController:
         self.frames = {}
         
         # Populate the frames dictionary with the views
-        for view_name in [ MainView, AddEditTransactionView, ViewTransactionsView, GenerateReportsView ]:
+        for view_name in [ MainView, 
+                          AddEditTransactionView, 
+                          ViewTransactionsView, 
+                          GenerateReportsView ]:
             frame = view_name(self.container, self)
             self.frames[view_name.__name__] = frame
 
@@ -39,6 +42,3 @@ class AppController:
 
     def quit(self):
         self.root.quit()
-
-
-
