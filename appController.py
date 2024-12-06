@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from appModel import AppModel
+from transactionModel import TransactionModel
 
 from mainView import MainView
 from addEditTransactionView import AddEditTransactionView
@@ -14,8 +15,9 @@ class AppController:
         self.root.title("Personal Finance Tracker")
         self.root.geometry("800x600")
 
-        #Create the model
+        #Create the models
         self.model = AppModel()
+        self.transaction_model = TransactionModel()
 
         self.container = tk.Frame(self.root)
         self.container.pack(fill="both", expand=True)
@@ -33,9 +35,26 @@ class AppController:
         # Show the main view
         self.show_frame("MainView")
 
-    def show_frame(self, view_name):
+    def show_frame(self, view_name, transaction=None):
+        if view_name == "AddEditTransactionView":
+            self.frames[view_name].set_transaction(transaction)
+        if view_name == "ViewTransactionsView":
+            self.frames[view_name].refresh(self.transaction_model.transactions)
+
         frame = self.frames[view_name]
         frame.tkraise()
+
+    def save_transaction(self, transaction):
+        if any(tx.id == transaction.id for tx in self.transaction_model.transactions):
+            self.transaction_model.update_transaction(transaction)
+        else:
+            self.transaction_model.add_transaction(transaction)
+        
+        self.show_frame("MainView")
+
+    def edit_transaction(self, transaction_id):
+        transaction = next((tx for tx in self.transaction_model.transactions if tx.id == transaction_id), None)
+        self.show_frame("AddEditTransactionView", transaction)
 
     def run(self):
         self.root.mainloop()
