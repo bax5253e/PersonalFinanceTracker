@@ -34,6 +34,29 @@ class TransactionModel:
                 self._save_transactions()
                 return
             
+    def delete_transaction(self, transaction_id):
+        self.transactions = [transaction for transaction in self.transactions if transaction.id != transaction_id]
+        self._save_transactions()
+
+    def get_summary(self):
+        income = sum([transaction.amount for transaction in self.transactions if transaction.amount > 0])
+        expenses = sum([transaction.amount for transaction in self.transactions if transaction.amount < 0])
+        net_balance = income + expenses
+
+        category_summary = {}
+        for transaction in self.transactions:
+            if transaction.category not in category_summary:
+                category_summary[transaction.category] = 0
+            
+            category_summary[transaction.category] += transaction.amount
+
+        return {
+            "income": income,
+            "expenses": expenses,
+            "net_balance": net_balance,
+            "category_summary": category_summary
+        }
+            
 if __name__ == "__main__":
     transaction_model = TransactionModel()
     print(transaction_model.transactions)

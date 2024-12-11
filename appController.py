@@ -40,6 +40,8 @@ class AppController:
             self.frames[view_name].set_transaction(transaction)
         if view_name == "ViewTransactionsView":
             self.frames[view_name].refresh(self.transaction_model.transactions)
+        if view_name == "GenerateReportsView":
+            self.frames[view_name].refresh()        
 
         frame = self.frames[view_name]
         frame.tkraise()
@@ -55,6 +57,13 @@ class AppController:
     def edit_transaction(self, transaction_id):
         transaction = next((tx for tx in self.transaction_model.transactions if tx.id == transaction_id), None)
         self.show_frame("AddEditTransactionView", transaction)
+
+    def delete_transaction(self, transaction_id):
+        self.transaction_model.delete_transaction(transaction_id)
+        self.show_frame("ViewTransactionsView")
+
+    def get_summary(self):
+        return self.transaction_model.get_summary()
 
     def run(self):
         self.root.mainloop()
